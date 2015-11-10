@@ -3,6 +3,7 @@
     <head>
         <title>WebGL Project</title>
         <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+        <meta charset="utf-8">
         <link rel="stylesheet" type="text/css" href="./css/layout.css">
         <link rel="stylesheet" type="text/css" href="./css/app.css">
     </head>
@@ -11,7 +12,37 @@
         <script src="./js/Bootstrapper.js"></script>
         <script src="./js/components/environment.js"></script>
         <script>
-            new Bootstrapper();
+            var scene = new THREE.Scene(); //Create a THREE.JS Scene
+            var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000); //Params: 1- Field Of View 2- Aspect Ratio(Always width/height) 3- near 4- far
+            var renderer = new THREE.WebGLRenderer(); //The real magic!
+            renderer.setSize(window.innerWidth, window.innerHeight); //If used with 3rd param as false -> decreases resolution
+            document.body.appendChild(renderer.domElement);
+            
+            /*Cube*/
+            var geometry = new THREE.BoxGeometry(1,1,1);
+            var material = new THREE.MeshBasicMaterial({ color: 0x00ff00});
+            var cube = new THREE.Mesh(geometry, material); //Mesh: is an object that takes a geometry, and applies a material to it, which we then can insert to our scene, and move freely around.
+            scene.add(cube);
+            cube.translateY(1);
+            
+            camera.position.z = 10; //Nothing rendered yet!
+            camera.position.x = 1;
+            camera.position.y = 3;
+            
+            /*Floor texture*/
+            var grid = new THREE.GridHelper( 200, 4 ); 
+            grid.setColors( 0xffffff, 0xffffff );
+            scene.add( grid );
+            scene.fog = new THREE.FogExp2( 0x000000, 0.0128 );
+            renderer.setClearColor( scene.fog.color, 1 );
+            
+            function render(){ //Refresh 60 times per second.
+                requestAnimationFrame(render);
+                renderer.render(scene, camera);
+                //cube.rotation.x += 0.1;
+                //cube.rotation.y += 0.1;
+            }
+            render();
         </script>
     </body>
 </html>
