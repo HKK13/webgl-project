@@ -9,6 +9,7 @@
     </head>
     <body>
         <script src="./lib/three.min.js"></script>
+        <script src="./lib/tween.js"></script>
         <script src="./lib/hammer.min.js"></script>
         <script src="../bower_components/dist/async.min.js"></script>
         <script>
@@ -38,10 +39,10 @@
 
             var coefficient = 0.1;
 
-            function render(){ //Refresh 60 times per second.
+            function render(time){ //Refresh 60 times per second.
                 requestAnimationFrame(render);
                 renderer.render(scene, camera);
-
+                TWEEN.update(time);
                 coefficient += 0.0001;
 
                 scene.position.z += coefficient;
@@ -67,24 +68,55 @@
             document.onkeyup = function(e) {
                 switch(e.which) {
                     case 37: // left
-                    if (cube.position.x > -3)
-                    cube.position.x -= 1;
+                    if (cube.position.x > -3) {
+                        var tween = new TWEEN.Tween({
+                                x: cube.position.x
+                            })
+                            .to({ x: cube.position.x - 3 }, 500)
+                            .onUpdate(function() {
+                                cube.position.x = this.x;
+                            })
+                            .easing(TWEEN.Easing.Exponential.InOut)
+                            .start();
+                    }
                     break;
 
                     case 38: // up
-                        for (var i = 0; i < 10; i++) {
-                            setTimeout(function() {
-                                cube.position.y += 0.01;
-                            }, 500);
-                        }
-                        setTimeout(function() {
-                            cube.position.y = 0;
-                        }, 1000);
+                        var goUp = new TWEEN.Tween({
+                                y: cube.position.y
+                            })
+                            .to({ y: cube.position.y + 3 }, 500)
+                            .onUpdate(function() {
+                                cube.position.y = this.y;
+                            })
+                            .delay(200)
+                            .easing(TWEEN.Easing.Exponential.InOut);
+
+                        var goDown = new TWEEN.Tween({
+                                y: 4
+                            })
+                            .to({ y: 1 }, 500)
+                            .onUpdate(function() {
+                                cube.position.y = this.y;
+                            })
+                            .easing(TWEEN.Easing.Exponential.Out);
+
+                        goUp.chain(goDown);
+                        goUp.start();
                     break;
 
                     case 39: // right
-                    if (cube.position.x < 3)
-                    cube.position.x += 1;
+                    if (cube.position.x < 3) {
+                        var tween = new TWEEN.Tween({
+                                x: cube.position.x
+                            })
+                            .to({ x: cube.position.x + 3 }, 500)
+                            .onUpdate(function() {
+                                cube.position.x = this.x;
+                            })
+                            .easing(TWEEN.Easing.Exponential.InOut)
+                            .start()
+                    }
                     break;
 
                     default: return; // exit this handler for other keys
