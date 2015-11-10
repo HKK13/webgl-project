@@ -9,40 +9,88 @@
     </head>
     <body>
         <script src="./lib/three.min.js"></script>
-        <script src="./js/Bootstrapper.js"></script>
-        <script src="./js/components/environment.js"></script>
+        <script src="./lib/hammer.min.js"></script>
+        <script src="../bower_components/dist/async.min.js"></script>
         <script>
             var scene = new THREE.Scene(); //Create a THREE.JS Scene
             var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000); //Params: 1- Field Of View 2- Aspect Ratio(Always width/height) 3- near 4- far
             var renderer = new THREE.WebGLRenderer(); //The real magic!
             renderer.setSize(window.innerWidth, window.innerHeight); //If used with 3rd param as false -> decreases resolution
             document.body.appendChild(renderer.domElement);
-            
+
             /*Cube*/
             var geometry = new THREE.BoxGeometry(1,1,1);
             var material = new THREE.MeshBasicMaterial({ color: 0x00ff00});
             var cube = new THREE.Mesh(geometry, material); //Mesh: is an object that takes a geometry, and applies a material to it, which we then can insert to our scene, and move freely around.
             scene.add(cube);
             cube.translateY(1);
-            
-            camera.position.z = 10; //Nothing rendered yet!
-            camera.position.x = 1;
-            camera.position.y = 3;
-            
+
+            camera.position.z = 9; //Nothing rendered yet!
+            camera.position.x = 0;
+            camera.position.y = 5;
+
             /*Floor texture*/
-            var grid = new THREE.GridHelper( 200, 4 ); 
+            var grid = new THREE.GridHelper( 1000, 4 );
             grid.setColors( 0xffffff, 0xffffff );
             scene.add( grid );
             scene.fog = new THREE.FogExp2( 0x000000, 0.0128 );
             renderer.setClearColor( scene.fog.color, 1 );
-            
+
+            var coefficient = 0.1;
+
             function render(){ //Refresh 60 times per second.
                 requestAnimationFrame(render);
                 renderer.render(scene, camera);
+
+                coefficient += 0.0001;
+
+                scene.position.z += coefficient;
+                cube.position.z -= coefficient;
+
                 //cube.rotation.x += 0.1;
                 //cube.rotation.y += 0.1;
             }
             render();
+
+            var dom_ = document.getElementsByTagName('canvas')[0];
+
+            Hammer(renderer.domElement).on("swipeleft", function() {
+                cube.position.x -= 1;
+                console.log('swipeleft')
+            });
+
+            Hammer(renderer.domElement).on("swiperight", function() {
+                console.log('swiperight')
+                cube.position.x += 1;
+            });
+
+            document.onkeyup = function(e) {
+                switch(e.which) {
+                    case 37: // left
+                    if (cube.position.x > -3)
+                    cube.position.x -= 1;
+                    break;
+
+                    case 38: // up
+                        for (var i = 0; i < 10; i++) {
+                            setTimeout(function() {
+                                cube.position.y += 0.01;
+                            }, 500);
+                        }
+                        setTimeout(function() {
+                            cube.position.y = 0;
+                        }, 1000);
+                    break;
+
+                    case 39: // right
+                    if (cube.position.x < 3)
+                    cube.position.x += 1;
+                    break;
+
+                    default: return; // exit this handler for other keys
+                }
+            }
+
         </script>
     </body>
 </html>
