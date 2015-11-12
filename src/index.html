@@ -11,12 +11,44 @@
         <script src="./lib/three.min.js"></script>
         <script src="./lib/tween.js"></script>
         <script src="./lib/hammer.min.js"></script>
-        <script src="../bower_components/dist/async.min.js"></script>
+        <script src="../bower_components/async/dist/async.min.js"></script>
         <script>
+            function addSphere(currentScene, x, y, z) {
+                var geometry = new THREE.SphereGeometry( 5, 32, 32 );
+                var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
+                var sphere = new THREE.Mesh( geometry, material );
+                currentScene.add( sphere );
+
+                sphere.position.x = x;
+                sphere.position.z = y;
+                sphere.position.y = z;
+            };
+
+            function add_objects(num, indiv){
+              var geometry = new THREE.SphereGeometry( 5, 32,32 );
+              var material = new THREE.MeshBasicMaterial( { shading: THREE.FlatShading } );
+              material.color.setRGB( Math.random(), Math.random(), Math.random() );
+              console.log(num);
+              for ( var i = 0; i < num; i ++ ) {
+                var mesh = new THREE.Mesh( geometry, material );
+                mesh.position.x = ( Math.random() - 0.5 ) * 1000;
+                mesh.position.y = ( Math.random() - 0.5 ) * 1000;
+                mesh.position.z = ( Math.random() - 0.5 ) * 1000;
+                mesh.updateMatrix();
+                mesh.matrixAutoUpdate = false;
+                scene.add( mesh );
+              }
+            }
+
             var scene = new THREE.Scene(); //Create a THREE.JS Scene
             var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000); //Params: 1- Field Of View 2- Aspect Ratio(Always width/height) 3- near 4- far
-            var renderer = new THREE.WebGLRenderer(); //The real magic!
+            var renderer = new THREE.WebGLRenderer({antialias: true}); //The real magic!
             renderer.setSize(window.innerWidth, window.innerHeight); //If used with 3rd param as false -> decreases resolution
+
+            renderer.shadowMap.enabled = true;
+            renderer.shadowMapSoft = true;
+            renderer.shadowMap.type = THREE.PCFShadowMap;
+            renderer.shadowMapAutoUpdate = true;
             document.body.appendChild(renderer.domElement);
 
             /*Cube*/
@@ -25,6 +57,22 @@
             var cube = new THREE.Mesh(geometry, material); //Mesh: is an object that takes a geometry, and applies a material to it, which we then can insert to our scene, and move freely around.
             scene.add(cube);
             cube.translateY(1);
+
+            var light = new THREE.DirectionalLight(0xffffff);
+
+            light.position.set(camera.position.x, camera.position.y, camera.position.z);
+            light.castShadow = true;
+            light.shadowCameraLeft = -60;
+            light.shadowCameraTop = -60;
+            light.shadowCameraRight = 60;
+            light.shadowCameraBottom = 60;
+            light.shadowCameraNear = 1;
+            light.shadowCameraFar = 1000;
+            light.shadowBias = -.0001
+            light.shadowMapWidth = light.shadowMapHeight = 1024;
+            light.shadowDarkness = .7;
+
+            scene.add(light)
 
             camera.position.z = 9; //Nothing rendered yet!
             camera.position.x = 0;
@@ -39,17 +87,22 @@
 
             var coefficient = 0.1;
 
+            addSphere(scene, 0, -55, 2);
+
             function render(time){ //Refresh 60 times per second.
-                requestAnimationFrame(render);
                 renderer.render(scene, camera);
+                requestAnimationFrame(render);
+
                 TWEEN.update(time);
-                coefficient += 0.0001;
 
-                scene.position.z += coefficient;
+                if (coefficient  <= 0.2)
+                    coefficient += 0.0001;
+
                 cube.position.z -= coefficient;
+                camera.position.z = cube.position.z + 9;
 
-                //cube.rotation.x += 0.1;
-                //cube.rotation.y += 0.1;
+                setTimeout( add_objects, 0, 20 );
+
             }
             render();
 
@@ -112,6 +165,7 @@
                             })
                             .to({ x: cube.position.x + 3 }, 500)
                             .onUpdate(function() {
+
                                 cube.position.x = this.x;
                             })
                             .easing(TWEEN.Easing.Exponential.InOut)
@@ -119,7 +173,7 @@
                     }
                     break;
 
-                    default: return; // exit this handler for other keys
+                    default: return;
                 }
             }
 
