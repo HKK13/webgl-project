@@ -77,10 +77,10 @@ utils.add.planes = function() {
     planes.push(plane);
 
     planes.push(plane.clone());
-    planes[1].position.z = plane.position.z + horizon;
+    planes[1].position.z = plane.position.z - horizon;
 
     planes.push(plane.clone());
-    planes[2].position.z = plane.position.z + horizon * 2;
+    planes[2].position.z = plane.position.z - horizon * 2;
 
     for (var index in planes)
         scene.add(planes[index]);
