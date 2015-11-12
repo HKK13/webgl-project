@@ -23,11 +23,9 @@
             utils.generate.randomObjects();
 
             utils.add.planes();
-            utils.add.grid();
 
             function render(time){ //Refresh 60 times per second.
                 renderer.render(scene, camera);
-                requestAnimationFrame(render);
 
                 TWEEN.update(time);
 
@@ -36,6 +34,8 @@
 
                 user.position.z -= coefficient;
                 camera.position.z = user.position.z + 9;
+
+                requestAnimationFrame(render);
             }
             render();
         </script>

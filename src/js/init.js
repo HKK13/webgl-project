@@ -9,10 +9,8 @@ var coefficient = 0.1;
     renderer = new THREE.WebGLRenderer({antialias: true}); //The real magic!
     renderer.setSize(window.innerWidth, window.innerHeight); //If used with 3rd param as false -> decreases resolution
 
-    renderer.shadowMap.enabled = true;
-    renderer.shadowMapSoft = true;
-    renderer.shadowMap.type = THREE.PCFShadowMap;
-    renderer.shadowMapAutoUpdate = true;
+    renderer.setPixelRatio( window.devicePixelRatio );
+    renderer.setClearColor(0x000000, 1.0);
 
     /** Append to DOM */
     document.body.appendChild(renderer.domElement);
