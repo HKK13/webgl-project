@@ -37,6 +37,28 @@
                 return mesh;
             }
 
+
+            var horizon = 3000;
+            var planes = [];
+            function addPlanes(){
+                var planeSegments = 60;
+                var plane = new THREE.Mesh(
+                        new THREE.PlaneGeometry(horizon, horizon, planeSegments, planeSegments),
+                        new THREE.MeshBasicMaterial({color: 0x00FF00, wireframe: true, trasparent: true})
+                    );
+                plane.position.z = -20;
+                planes.push(plane);
+                planes[1] = plane.clone();
+                planes[1].position.y = plane.position.y + horizon;
+
+                planes[2] = plane.clone();
+                planes[2].position.y = plane.position.y + horizon;
+
+                scene.add(planes[0]);
+                scene.add(planes[1]);
+                scene.add(planes[2]);
+            }
+
             var scene = new THREE.Scene(); //Create a THREE.JS Scene
             var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000); //Params: 1- Field Of View 2- Aspect Ratio(Always width/height) 3- near 4- far
             var renderer = new THREE.WebGLRenderer({antialias: true}); //The real magic!
@@ -55,32 +77,17 @@
             scene.add(cube);
             cube.translateY(1);
 
-            var light = new THREE.DirectionalLight(0xffffff);
-
-            light.position.set(camera.position.x, camera.position.y, camera.position.z);
-            light.castShadow = true;
-            light.shadowCameraLeft = -60;
-            light.shadowCameraTop = -60;
-            light.shadowCameraRight = 60;
-            light.shadowCameraBottom = 60;
-            light.shadowCameraNear = 1;
-            light.shadowCameraFar = 1000;
-            light.shadowBias = -.0001
-            light.shadowMapWidth = light.shadowMapHeight = 1024;
-            light.shadowDarkness = .7;
-
-            scene.add(light);
 
             camera.position.z = 9; //Nothing rendered yet!
             camera.position.x = 0;
             camera.position.y = 5;
 
             /*Floor texture*/
-            var grid = new THREE.GridHelper( 1000, 4 );
-            grid.setColors( 0xffffff, 0xffffff );
-            scene.add( grid );
-            scene.fog = new THREE.FogExp2( 0x000000, 0.0128 );
-            renderer.setClearColor( scene.fog.color, 1 );
+            //var grid = new THREE.GridHelper( 1000, 4 );
+            //grid.setColors( 0xffffff, 0xffffff );
+            //scene.add( grid );
+            scene.fog = new THREE.FogExp2( renderer.getClearColor(), 0.0005 );
+
 
             var coefficient = 0.1;
 
@@ -89,13 +96,21 @@
             var timeout;
 
             function addObjectLoop() {
-                for(var i = 0; i <10 ; i++){
-                    scene.add(add_objects());
+                for(var i = 0; i <20 ; i++){
+                    mesh = add_objects();
+                    if((mesh.position.z < camera.position.z -70) && ((mesh.position.x < -5) || (mesh.position.x > 5))){
+                        scene.add(mesh);
+                    }
                 }
             }
             addObjectLoop();
-            setInterval(addObjectLoop, 5000);
+            setInterval(addObjectLoop, 7000);
 
+            function init(){
+
+            }
+
+            addPlanes();
             function render(time){ //Refresh 60 times per second.
                 renderer.render(scene, camera);
                 requestAnimationFrame(render);
