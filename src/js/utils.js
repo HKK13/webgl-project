@@ -67,18 +67,19 @@ utils.generate.addObjects_ = function() {
 utils.add.planes = function() {
     var planeSegments = 60,
         plane = new THREE.Mesh(
-            new THREE.PlaneGeometry(horizon, horizon, planeSegments, planeSegments),
-            new THREE.MeshBasicMaterial({color: 0x00FF00, wireframe: true, trasparent: true})
+            new THREE.PlaneGeometry(1000, 1000, planeSegments, planeSegments),
+            new THREE.MeshBasicMaterial({color: 0x00FF00, wireframe: true})
         );
 
-    plane.position.z = -20;
+    plane.rotation.x = Math.PI / 2;
+    plane.position.y = 0;
     planes.push(plane);
 
     planes.push(plane.clone());
-    planes[1].position.y = plane.position.y + horizon;
+    planes[1].position.z = plane.position.z + horizon;
 
     planes.push(plane.clone());
-    planes[2].position.y = plane.position.y + horizon;
+    planes[2].position.z = plane.position.z + horizon *2;
 
     for (var index in planes)
         scene.add(planes[index]);
