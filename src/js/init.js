@@ -10,7 +10,7 @@ var coefficient = 0.1;
     renderer.setSize(window.innerWidth, window.innerHeight); //If used with 3rd param as false -> decreases resolution
 
     renderer.setPixelRatio( window.devicePixelRatio );
-    renderer.setClearColor(0x000000, 1.0);
+    renderer.setClearColor(0x00FFFF, 1);
 
     /** Append to DOM */
     document.body.appendChild(renderer.domElement);
