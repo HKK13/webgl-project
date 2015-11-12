@@ -65,13 +65,13 @@ utils.generate.addObjects_ = function() {
  * Add planes to scene.
  */
 utils.add.planes = function() {
-    var planeSegments = 500,
+    var planeSegments = 50,
         plane = new THREE.Mesh(
             new THREE.PlaneGeometry(horizon, horizon, planeSegments, planeSegments),
-            new THREE.MeshBasicMaterial({ color:0xEEDBA6, wireframe: true })
+            new THREE.MeshBasicMaterial({ color:0xEEDBA6, wireframe: false })
         );
 
-    plane.rotation.x = Math.PI / 2;
+    plane.rotation.x = -Math.PI / 2;
     plane.position.y = 0;
 
     planes.push(plane);
