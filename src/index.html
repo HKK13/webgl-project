@@ -11,106 +11,20 @@
         <script src="./lib/three.min.js"></script>
         <script src="./lib/tween.js"></script>
         <script src="./lib/hammer.min.js"></script>
+
+        <script src="./js/init.js"></script>
+        <script src="./js/keyboard.js"></script>
+        <script src="./js/utils.js"></script>
+
         <script src="../bower_components/async/dist/async.min.js"></script>
         <script>
-            function addSphere(currentScene, x, y, z) {
-                var geometry = new THREE.SphereGeometry( 5, 32, 32 );
-                var material = new THREE.MeshBasicMaterial( {color: 0xffff00} );
-                var sphere = new THREE.Mesh( geometry, material );
-                currentScene.add( sphere );
+            /* Generate user. */
+            utils.generate.user();
+            utils.generate.randomObjects();
 
-                sphere.position.x = x;
-                sphere.position.z = y;
-                sphere.position.y = z;
-            };
+            utils.add.planes();
+            utils.add.grid();
 
-            function add_objects(){
-              var geometry = new THREE.SphereGeometry( 5, 32,32 );
-              var material = new THREE.MeshBasicMaterial( { shading: THREE.FlatShading } );
-              material.color.setRGB( Math.random(), Math.random(), Math.random() );
-                var mesh = new THREE.Mesh( geometry, material );
-                mesh.position.x = (( Math.random() - 0.5 ) * 1000) %30;
-                mesh.position.y = (( Math.random() - 0.5 ) * 1000) %30;
-                mesh.position.z = ((camera.position.z - (( Math.random() - 0.5 ) * 1000) %100)) + (-100);
-                mesh.updateMatrix();
-                mesh.matrixAutoUpdate = false;
-                return mesh;
-            }
-
-
-            var horizon = 3000;
-            var planes = [];
-            function addPlanes(){
-                var planeSegments = 60;
-                var plane = new THREE.Mesh(
-                        new THREE.PlaneGeometry(horizon, horizon, planeSegments, planeSegments),
-                        new THREE.MeshBasicMaterial({color: 0x00FF00, wireframe: true, trasparent: true})
-                    );
-                plane.position.z = -20;
-                planes.push(plane);
-                planes[1] = plane.clone();
-                planes[1].position.y = plane.position.y + horizon;
-
-                planes[2] = plane.clone();
-                planes[2].position.y = plane.position.y + horizon;
-
-                scene.add(planes[0]);
-                scene.add(planes[1]);
-                scene.add(planes[2]);
-            }
-
-            var scene = new THREE.Scene(); //Create a THREE.JS Scene
-            var camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000); //Params: 1- Field Of View 2- Aspect Ratio(Always width/height) 3- near 4- far
-            var renderer = new THREE.WebGLRenderer({antialias: true}); //The real magic!
-            renderer.setSize(window.innerWidth, window.innerHeight); //If used with 3rd param as false -> decreases resolution
-
-            renderer.shadowMap.enabled = true;
-            renderer.shadowMapSoft = true;
-            renderer.shadowMap.type = THREE.PCFShadowMap;
-            renderer.shadowMapAutoUpdate = true;
-            document.body.appendChild(renderer.domElement);
-
-            /*Cube*/
-            var geometry = new THREE.BoxGeometry(1,1,1);
-            var material = new THREE.MeshBasicMaterial({ color: 0x00ff00});
-            var cube = new THREE.Mesh(geometry, material); //Mesh: is an object that takes a geometry, and applies a material to it, which we then can insert to our scene, and move freely around.
-            scene.add(cube);
-            cube.translateY(1);
-
-
-            camera.position.z = 9; //Nothing rendered yet!
-            camera.position.x = 0;
-            camera.position.y = 5;
-
-            /*Floor texture*/
-            //var grid = new THREE.GridHelper( 1000, 4 );
-            //grid.setColors( 0xffffff, 0xffffff );
-            //scene.add( grid );
-            scene.fog = new THREE.FogExp2( renderer.getClearColor(), 0.0005 );
-
-
-            var coefficient = 0.1;
-
-            //addSphere(scene, 0, -55, 2);
-            var ambientMeshObjects = [];
-            var timeout;
-
-            function addObjectLoop() {
-                for(var i = 0; i <20 ; i++){
-                    mesh = add_objects();
-                    if((mesh.position.z < camera.position.z -70) && ((mesh.position.x < -5) || (mesh.position.x > 5))){
-                        scene.add(mesh);
-                    }
-                }
-            }
-            addObjectLoop();
-            setInterval(addObjectLoop, 7000);
-
-            function init(){
-
-            }
-
-            addPlanes();
             function render(time){ //Refresh 60 times per second.
                 renderer.render(scene, camera);
                 requestAnimationFrame(render);
@@ -120,83 +34,10 @@
                 if (coefficient  <= 0.2)
                     coefficient += 0.0001;
 
-                cube.position.z -= coefficient;
-                camera.position.z = cube.position.z + 9;
-
+                user.position.z -= coefficient;
+                camera.position.z = user.position.z + 9;
             }
             render();
-
-            var dom_ = document.getElementsByTagName('canvas')[0];
-
-            Hammer(renderer.domElement).on("swipeleft", function() {
-                cube.position.x -= 1;
-                console.log('swipeleft')
-            });
-
-            Hammer(renderer.domElement).on("swiperight", function() {
-                console.log('swiperight')
-                cube.position.x += 1;
-            });
-
-            document.onkeyup = function(e) {
-                switch(e.which) {
-                    case 37: // left
-                    if (cube.position.x > -3) {
-                        var tween = new TWEEN.Tween({
-                                x: cube.position.x
-                            })
-                            .to({ x: cube.position.x - 3 }, 500)
-                            .onUpdate(function() {
-                                cube.position.x = this.x;
-                            })
-                            .easing(TWEEN.Easing.Exponential.InOut)
-                            .start();
-                    }
-                    break;
-
-                    case 38: // up
-                        var goUp = new TWEEN.Tween({
-                                y: cube.position.y
-                            })
-                            .to({ y: cube.position.y + 3 }, 500)
-                            .onUpdate(function() {
-                                cube.position.y = this.y;
-                            })
-                            .delay(200)
-                            .easing(TWEEN.Easing.Exponential.InOut);
-
-                        var goDown = new TWEEN.Tween({
-                                y: 4
-                            })
-                            .to({ y: 1 }, 500)
-                            .onUpdate(function() {
-                                cube.position.y = this.y;
-                            })
-                            .easing(TWEEN.Easing.Exponential.Out);
-
-                        goUp.chain(goDown);
-                        goUp.start();
-                    break;
-
-                    case 39: // right
-                    if (cube.position.x < 3) {
-                        var tween = new TWEEN.Tween({
-                                x: cube.position.x
-                            })
-                            .to({ x: cube.position.x + 3 }, 500)
-                            .onUpdate(function() {
-
-                                cube.position.x = this.x;
-                            })
-                            .easing(TWEEN.Easing.Exponential.InOut)
-                            .start()
-                    }
-                    break;
-
-                    default: return;
-                }
-            }
-
         </script>
     </body>
 </html>
