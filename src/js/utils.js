@@ -35,10 +35,25 @@ utils.generate.randomObjects = function() {
                     objectArr.push(mesh);
                 }
             }
+            utils.generate.obstacles();
         };
-
+    
     generate();
     setInterval(generate, 7000);
+};
+
+/**
+ * dd
+ */
+utils.generate.obstacles = function(){
+        var geo = new THREE.BoxGeometry(10,4,1),
+                material = new THREE.MeshBasicMaterial({shading: THREE.FlatShading});
+        material.color.setRGB(0xffffff);
+       
+        var mesh = new THREE.Mesh(geo, material);
+        mesh.position.z = user.position.z -30;
+        scene.add(mesh);
+        objectArr.push(mesh);
 };
 
 /**
