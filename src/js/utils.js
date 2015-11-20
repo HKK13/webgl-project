@@ -2,6 +2,7 @@ var utils = {};
 utils.generate = {};
 utils.add = {}
 utils.remove = {};
+utils.get = {};
 
 
 /**
@@ -45,6 +46,7 @@ utils.generate.randomObjects = function() {
 /**
  * dd
  */
+var collideObj = []
 utils.generate.obstacles = function(){
         var geo = new THREE.BoxGeometry(10,4,1),
                 material = new THREE.MeshBasicMaterial({shading: THREE.FlatShading});
@@ -53,8 +55,12 @@ utils.generate.obstacles = function(){
         var mesh = new THREE.Mesh(geo, material);
         mesh.position.z = user.position.z -30;
         scene.add(mesh);
-        objectArr.push(mesh);
+        collideObj.push(mesh);
 };
+
+utils.get.collideableObjects = function (){
+    return collideObj;
+}
 
 /**
  * Removes objects that user has passed. TODO: Does not remove all.

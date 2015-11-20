@@ -8,6 +8,9 @@
         <link rel="stylesheet" type="text/css" href="./css/app.css">
     </head>
     <body>
+        <div style="height: 50px; position: absolute; top: 0; width: 100%; background-color: white; font-size: 18px;">
+            <p id="textBox"></p>
+        </div>
         <script src="./lib/three.min.js"></script>
         <script src="./lib/tween.js"></script>
         <script src="./lib/hammer.min.js"></script>
@@ -23,7 +26,7 @@
             utils.generate.randomObjects();
 
             utils.add.planes();
-
+            
             function render(time){ //Refresh 60 times per second.
                 renderer.render(scene, camera);
 
@@ -36,6 +39,21 @@
                 camera.position.z = user.position.z + 9;
 
                 requestAnimationFrame(render);
+                
+                for (var vertexIndex = 0; vertexIndex < user.geometry.vertices.length; vertexIndex++){		//view-source:https://stemkoski.github.io/Three.js/Collision-Detection.html
+                    var localVertex = user.geometry.vertices[vertexIndex].clone();
+                    var globalVertex = localVertex.applyMatrix4( user.matrix );
+                    var directionVector = globalVertex.sub( user.position );
+                    
+                    var ray = new THREE.Raycaster( user.position.clone(), directionVector.clone().normalize() );
+                    var collisionResults = ray.intersectObjects( utils.get.collideableObjects() );
+                    
+                    if( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) 
+                        document.getElementById('textBox').innerHTML = "Hit";
+                    else{
+                        document.getElementById('textBox').innerHTML = "";
+                    }
+                }	
             }
             render();
         </script>
