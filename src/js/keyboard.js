@@ -1,5 +1,5 @@
 (function() {
-    document.onkeyup = function(e) {
+    document.onkeydown = function(e) {
         switch(e.which) {
             case 37: // left
                 if (user.position.x > -3) {
@@ -23,13 +23,13 @@
                     .onUpdate(function() {
                         user.position.y = this.y;
                     })
-                    .delay(200)
+                    .delay(0)
                     .easing(TWEEN.Easing.Exponential.InOut);
-
+            
                 var goDown = new TWEEN.Tween({
                         y: 4
                     })
-                    .to({ y: 1 }, 500)
+                    .to({ y: 1 }, 1500)
                     .onUpdate(function() {
                         user.position.y = this.y;
                     })
