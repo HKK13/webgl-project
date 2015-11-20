@@ -1,6 +1,7 @@
 var utils = {};
 utils.generate = {};
 utils.add = {}
+utils.remove = {};
 
 
 /**
@@ -22,19 +23,36 @@ utils.generate.user = function() {
 /**
  * Generates random objects every 7 seconds.
  */
+var objectArr = [];
 utils.generate.randomObjects = function() {
     var mesh,
         generate = function() {
-            for(var i = 0; i <20 ; i++){
+            utils.remove.passedObjects();
+            for(var i = 0; i <12 ; i++){
                 mesh = utils.generate.addObjects_();
                 if((mesh.position.z < camera.position.z -70) && ((mesh.position.x < -5) || (mesh.position.x > 5))){
                     scene.add(mesh);
+                    objectArr.push(mesh);
                 }
             }
         };
 
     generate();
     setInterval(generate, 7000);
+};
+
+/**
+ * Removes objects that user has passed. TODO: Does not remove all.
+ */
+utils.remove.passedObjects = function(){
+    console.log(objectArr.length);
+    for(var i = 0; i < objectArr.length; i++){
+        obj = objectArr[i];
+        if(obj.position.z > user.position.z){
+            scene.remove(obj);
+            objectArr.shift(obj);
+        }
+    }
 };
 
 
@@ -53,7 +71,7 @@ utils.generate.addObjects_ = function() {
 
     mesh.position.x = (( Math.random() - 0.5 ) * 1000) %30;
     mesh.position.x += (mesh.position.x > 0) ? 10 : -10;
-    mesh.position.z = ((camera.position.z - (( Math.random() - 0.5 ) * 1000) %100)) + (-100);
+    mesh.position.z = ((user.position.z - (( Math.random() - 0.5 ) * 1000) %100)) + (-100);
     mesh.updateMatrix();
     mesh.matrixAutoUpdate = false;
 
@@ -68,7 +86,7 @@ utils.add.planes = function() {
     var planeSegments = 50,
         plane = new THREE.Mesh(
             new THREE.PlaneGeometry(horizon, horizon, planeSegments, planeSegments),
-            new THREE.MeshBasicMaterial({ color:0xEEDBA6, wireframe: false })
+            new THREE.MeshBasicMaterial({ color:0x000000, wireframe: false })
         );
 
     plane.rotation.x = -Math.PI / 2;
