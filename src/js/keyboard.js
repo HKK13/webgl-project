@@ -29,10 +29,10 @@
                 var goDown = new TWEEN.Tween({
                         y: 4
                     })
-                    .to({ y: 1 }, 1500)
+                    .to({ y: 1 }, 500)
                     .onUpdate(function() {
                         user.position.y = this.y;
-                    })
+                    }).delay(300)
                     .easing(TWEEN.Easing.Exponential.Out);
 
                 goUp.chain(goDown);
