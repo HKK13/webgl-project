@@ -36,7 +36,6 @@ utils.generate.randomObjects = function() {
                     objectArr.push(mesh);
                 }
             }
-            utils.generate.obstacles();
         };
     
     generate();
@@ -48,15 +47,44 @@ utils.generate.randomObjects = function() {
  */
 var collideObj = []
 utils.generate.obstacles = function(){
-        var geo = new THREE.BoxGeometry(10,4,1),
-                material = new THREE.MeshBasicMaterial({shading: THREE.FlatShading});
-        material.color.setRGB(0xffffff);
-       
-        var mesh = new THREE.Mesh(geo, material);
-        mesh.position.z = user.position.z -30;
+    var rand = 7000;
+    var interval;
+    var mulConstant = 8000;
+    setTimeout(10000);
+    beginGenerate = function (){
+        var mesh = utils.generate.shape();
         scene.add(mesh);
         collideObj.push(mesh);
+        if(mulConstant > 1500) 
+            mulConstant = mulConstant - 500 * coefficient;
+        else
+            mulConstant = 1400;
+        var rand = 1000+Math.floor(Math.random() * mulConstant);
+        clearInterval(interval);
+        interval = setInterval(beginGenerate, rand);
+        console.log(mulConstant);
+    }; 
+    beginGenerate();
 };
+
+var obstaclePos = [-3.5, 3.5];
+var obstacleLen = [10, 8];
+utils.generate.shape = function (){
+    var length = obstacleLen[Math.floor(Math.random() * obstacleLen.length)];
+    var pos = 0,
+        height = 4;
+    if(length !== 10){
+        pos = obstaclePos[Math.floor(Math.random() * obstaclePos.length)];
+        height = 8;
+    }
+    var geo = new THREE.BoxGeometry(length,height,1);
+    material = new THREE.MeshBasicMaterial({shading: THREE.FlatShading});
+        material.color.setRGB(0xffffff);
+    var mesh = new THREE.Mesh(geo, material);
+    mesh.position.z = user.position.z -40;
+    mesh.position.x = pos;
+    return mesh;
+}
 
 utils.get.collideableObjects = function (){
     return collideObj;
