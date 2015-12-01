@@ -66,7 +66,6 @@ utils.get.collideableObjects = function (){
  * Removes objects that user has passed. TODO: Does not remove all.
  */
 utils.remove.passedObjects = function(){
-    console.log(objectArr.length);
     for(var i = 0; i < objectArr.length; i++){
         obj = objectArr[i];
         if(obj.position.z > user.position.z){

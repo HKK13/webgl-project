@@ -8,7 +8,7 @@
         <link rel="stylesheet" type="text/css" href="./css/app.css">
     </head>
     <body>
-        <div style="height: 50px; position: absolute; top: 0; width: 100%; background-color: white; font-size: 18px;">
+        <div class="container">
             <p id="textBox"></p>
         </div>
         <script src="./lib/three.min.js"></script>
@@ -21,13 +21,22 @@
 
         <script src="../bower_components/async/dist/async.min.js"></script>
         <script>
+            var textBoxObject = document.getElementById('textBox'),
+                startTime = null;
+
             /* Generate user. */
             utils.generate.user();
+
+            var gameEnded = false;
+
+            document.getElementById('textBox').innerHTML = 'Game is starting in 3 seconds...';
             utils.generate.randomObjects();
 
             utils.add.planes();
             
             function render(time){ //Refresh 60 times per second.
+                if (gameEnded) return;
+
                 renderer.render(scene, camera);
 
                 TWEEN.update(time);
@@ -48,14 +57,32 @@
                     var ray = new THREE.Raycaster( user.position.clone(), directionVector.clone().normalize() );
                     var collisionResults = ray.intersectObjects( utils.get.collideableObjects() );
                     
-                    if( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() ) 
-                        document.getElementById('textBox').innerHTML = "Hit";
-                    else{
-                        document.getElementById('textBox').innerHTML = "";
+                    if( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() )  {
+                        gameEnded = true;
+                        textBoxObject.innerHTML = 'Sorry. Your point is: ' + (Date.now() - startTime);
+
+                        setTimeout(function() {
+                            document.getElementsByClassName('container')[0].style.display = 'none';
+
+                            setTimeout(function() {
+                                location.reload();
+                            }, 3000);
+                        }, 2000);
                     }
                 }	
             }
-            render();
+
+            var count = 3,
+                counter = setInterval(function() {
+                    if (count == 0) {
+                        render();
+                        startTime = Date.now();
+                        textBoxObject.innerHTML = 'Good luck!';
+                        return clearInterval(counter);
+                    }
+                    count--;
+                    textBoxObject.innerHTML = 'Game is starting in ' + count + ' seconds...';
+                }, 1000);
         </script>
     </body>
 </html>
