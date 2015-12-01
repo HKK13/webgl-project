@@ -49,7 +49,7 @@ var collideObj = []
 utils.generate.obstacles = function(){
     var rand = 7000;
     var interval;
-    var mulConstant = 8000;
+    var mulConstant = 7000;
     setTimeout(10000);
     beginGenerate = function (){
         var mesh = utils.generate.shape();
@@ -59,7 +59,7 @@ utils.generate.obstacles = function(){
             mulConstant = mulConstant - 500 * coefficient;
         else
             mulConstant = 1400;
-        var rand = 1000+Math.floor(Math.random() * mulConstant);
+        var rand = 800+Math.floor(Math.random() * mulConstant);
         clearInterval(interval);
         interval = setInterval(beginGenerate, rand);
         console.log(mulConstant);
@@ -77,7 +77,7 @@ utils.generate.shape = function (){
         pos = obstaclePos[Math.floor(Math.random() * obstaclePos.length)];
         height = 8;
     }
-    var geo = new THREE.BoxGeometry(length,height,1);
+    var geo = new THREE.BoxGeometry(length,height,0.5);
     material = new THREE.MeshBasicMaterial({shading: THREE.FlatShading});
         material.color.setRGB(0xffffff);
     var mesh = new THREE.Mesh(geo, material);
