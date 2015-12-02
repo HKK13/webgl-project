@@ -11,11 +11,13 @@ utils.get = {};
  */
 utils.generate.user = function() {
     var geometry = new THREE.BoxGeometry(1,1,1),
-        material = new THREE.MeshBasicMaterial({ color: 0x00ff00});
+        material = new THREE.MeshPhongMaterial({ color: 0x00ff00});
 
     user = new THREE.Mesh(geometry, material);
 
     user.translateY(1);
+    user.castShadow = true;
+    user.receiveShadow = false;
     scene.add(user);
     return user;
 };
@@ -78,8 +80,8 @@ utils.generate.shape = function (){
         height = 8;
     }
     var geo = new THREE.BoxGeometry(length,height,0.5);
-    material = new THREE.MeshBasicMaterial({shading: THREE.FlatShading});
-        material.color.setRGB(0xffffff);
+    material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading});
+        material.color.setRGB(0x0f0f0f);
     var mesh = new THREE.Mesh(geo, material);
     mesh.position.z = user.position.z -40;
     mesh.position.x = pos;
@@ -112,7 +114,7 @@ utils.remove.passedObjects = function(){
  */
 utils.generate.addObjects_ = function() {
     var geometry = new THREE.SphereGeometry( 5, 32,32 ),
-        material = new THREE.MeshBasicMaterial( { shading: THREE.FlatShading } );
+        material = new THREE.MeshPhongMaterial( { shading: THREE.FlatShading } );
     material.color.setRGB( Math.random(), Math.random(), Math.random() );
 
     var mesh = new THREE.Mesh( geometry, material );
@@ -131,12 +133,13 @@ utils.generate.addObjects_ = function() {
  * Add planes to scene.
  */
 utils.add.planes = function() {
-    var planeSegments = 50,
+    var planeSegments = 500,
         plane = new THREE.Mesh(
             new THREE.PlaneGeometry(horizon, horizon, planeSegments, planeSegments),
-            new THREE.MeshBasicMaterial({ color:0x000000, wireframe: false })
+            new THREE.MeshPhongMaterial({ color:0xffffff, wireframe: false })
         );
-
+    plane.castShadow = false;
+    plane.receiveShadow = true;
     plane.rotation.x = -Math.PI / 2;
     plane.position.y = 0;
 

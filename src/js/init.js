@@ -1,7 +1,8 @@
 var renderer, scene, camera, grid, user;
 var horizon = 3000;
 var planes = [], objects = [];
-var coefficient = 0.1;
+var coefficient = 0.1,
+    directionalLight;
 
 (function() {
     scene = new THREE.Scene(); //Create a THREE.JS Scene
@@ -11,6 +12,7 @@ var coefficient = 0.1;
 
     renderer.setPixelRatio( window.devicePixelRatio );
     renderer.setClearColor(0x00FFFF, 1);
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
     /** Append to DOM */
     document.body.appendChild(renderer.domElement);
@@ -22,4 +24,20 @@ var coefficient = 0.1;
 
     /** Initialize fog */
     scene.fog = new THREE.FogExp2( renderer.getClearColor(), 0.0005 );
+
+
+    //Lightning
+    //TODO WTF SHADOW!?
+    directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+    directionalLight.position.set( 100, 100, 0 );
+    directionalLight.castShadow = true;
+    directionalLight.shadowDarkness = 0.5;
+    directionalLight.shadowCameraRight     =  5;
+    directionalLight.shadowCameraLeft     = -5;
+    directionalLight.shadowCameraTop      =  5;
+    directionalLight.shadowCameraBottom   = -5;
+    scene.add( directionalLight );
+
+    var light = new THREE.AmbientLight( 0x404040 ); // soft white light
+    scene.add( light );
 })();

@@ -46,7 +46,9 @@
                 if (coefficient  <= 0.2)
                     coefficient += 0.0001;
 
+
                 user.position.z -= coefficient;
+                directionalLight.position.z = user.position.z+100;
                 camera.position.z = user.position.z + 9;
 
                 requestAnimationFrame(render);
