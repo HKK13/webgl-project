@@ -80,7 +80,7 @@ utils.generate.shape = function (){
         height = 8;
     }
     var geo = new THREE.BoxGeometry(length,height,0.5);
-    material = new THREE.MeshPhongMaterial({shading: THREE.FlatShading});
+    material = new THREE.MeshPhongMaterial();
         material.color.setRGB(0x0f0f0f);
     var mesh = new THREE.Mesh(geo, material);
     mesh.position.z = user.position.z -40;
@@ -114,7 +114,7 @@ utils.remove.passedObjects = function(){
  */
 utils.generate.addObjects_ = function() {
     var geometry = new THREE.SphereGeometry( 5, 32,32 ),
-        material = new THREE.MeshPhongMaterial( { shading: THREE.FlatShading } );
+        material = new THREE.MeshPhongMaterial();
     material.color.setRGB( Math.random(), Math.random(), Math.random() );
 
     var mesh = new THREE.Mesh( geometry, material );
