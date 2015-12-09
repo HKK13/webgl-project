@@ -32,7 +32,6 @@
             textBoxObject.innerHTML = 'Game is starting in 3 seconds...';
 
             utils.generate.randomObjects();
-            utils.generate.obstacles();
 
             utils.add.planes();
 
@@ -80,6 +79,7 @@
                 counter = setInterval(function() {
                     if (count == 0) {
                         render();
+                        utils.generate.obstacles();
                         startTime = Date.now();
                         textBoxObject.innerHTML = 'Good luck!';
                         return clearInterval(counter);
