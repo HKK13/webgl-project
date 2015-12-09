@@ -39,7 +39,7 @@ utils.generate.randomObjects = function() {
                 }
             }
         };
-    
+
     generate();
     setInterval(generate, 7000);
 };
@@ -57,20 +57,22 @@ utils.generate.obstacles = function(){
         var mesh = utils.generate.shape();
         scene.add(mesh);
         collideObj.push(mesh);
-        if(mulConstant > 1500) 
-            mulConstant = mulConstant - 500 * coefficient;
-        else
-            mulConstant = 1400;
+
+        mulConstant = (mulConstant > 1500) ? mulConstant - 500 * coefficient : 1400;
+
         var rand = 800+Math.floor(Math.random() * mulConstant);
         clearInterval(interval);
         interval = setInterval(beginGenerate, rand);
         console.log(mulConstant);
-    }; 
+    };
     beginGenerate();
 };
 
 var obstaclePos = [-3.5, 3.5];
 var obstacleLen = [10, 8];
+/**
+ * Generates obstacle shapes.
+ */
 utils.generate.shape = function (){
     var length = obstacleLen[Math.floor(Math.random() * obstacleLen.length)];
     var pos = 0,
@@ -80,11 +82,17 @@ utils.generate.shape = function (){
         height = 8;
     }
     var geo = new THREE.BoxGeometry(length,height,0.5);
-    material = new THREE.MeshPhongMaterial();
-        material.color.setRGB(0x0f0f0f);
+    material = new THREE.MeshPhongMaterial({
+        color: 0xFF0000
+    });
+
     var mesh = new THREE.Mesh(geo, material);
-    mesh.position.z = user.position.z -40;
+    mesh.position.z = user.position.z - 40;
     mesh.position.x = pos;
+
+    mesh.castShadow = true;
+    mesh.receiveShadow = false;
+
     return mesh;
 }
 
@@ -124,7 +132,8 @@ utils.generate.addObjects_ = function() {
     mesh.position.z = ((user.position.z - (( Math.random() - 0.5 ) * 1000) %100)) + (-100);
     mesh.updateMatrix();
     mesh.matrixAutoUpdate = false;
-
+    mesh.castShadow = true;
+    mesh.receiveShadow = false;
     return mesh;
 };
 
@@ -142,6 +151,7 @@ utils.add.planes = function() {
     plane.receiveShadow = true;
     plane.rotation.x = -Math.PI / 2;
     plane.position.y = 0;
+    plane.receiveShadow = true;
 
     planes.push(plane);
 
