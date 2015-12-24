@@ -4,6 +4,8 @@ var planes = [], objects = [];
 var coefficient = 0.1,
     directionalLight;
 
+THREE.ImageUtils.crossOrigin = '';
+
 (function() {
     scene = new THREE.Scene(); //Create a THREE.JS Scene
     camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000); //Params: 1- Field Of View 2- Aspect Ratio(Always width/height) 3- near 4- far

@@ -74,19 +74,21 @@ var obstacleLen = [10, 8];
  * Generates obstacle shapes.
  */
 utils.generate.shape = function (){
-    var length = obstacleLen[Math.floor(Math.random() * obstacleLen.length)];
-    var pos = 0,
+    var length = obstacleLen[Math.floor(Math.random() * obstacleLen.length)],
+        pos = 0,
         height = 4;
-    if(length !== 10){
+
+    if (length !== 10) {
         pos = obstaclePos[Math.floor(Math.random() * obstaclePos.length)];
         height = 8;
     }
-    var geo = new THREE.BoxGeometry(length,height,0.5);
-    material = new THREE.MeshPhongMaterial({
-        color: 0xFF0000
-    });
 
-    var mesh = new THREE.Mesh(geo, material);
+    var geo = new THREE.BoxGeometry(length,height,0.5),
+        material = new THREE.MeshPhongMaterial({
+            map: (new THREE.TextureLoader()).load('./img/brick.jpg')
+        }),
+        mesh = new THREE.Mesh(geo, material);
+
     mesh.position.z = user.position.z - 40;
     mesh.position.x = pos;
 
