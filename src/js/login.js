@@ -2,8 +2,14 @@ $('#singlePlayerButton').on('click', function() {
     startGame();
 });
 
+var toggleLoadingSpinner = function() {
+    $('.loadingSpinner').toggleClass('active');
+    $('.loaderBar').toggleClass('showLoaderBar');
+};
 
 var startGame = function() {
+    toggleLoadingSpinner();
+
     init();
 
     var textBoxObject = document.getElementById('textBox'),
@@ -13,17 +19,21 @@ var startGame = function() {
     utils.generate.user();
 
     var gameEnded = false;
-
-    //textBoxObject.innerHTML = 'Game is starting in 3 seconds...';
-
+    var gameStarted = false;
     utils.generate.randomObjects();
 
     utils.add.planes();
+
 
     function render(time){ //Refresh 60 times per second.
         if (gameEnded) return;
 
         renderer.render(scene, camera);
+
+        if (!gameStarted) {
+            toggleLoadingSpinner();
+            gameStarted = true;
+        }
 
         TWEEN.update(time);
 
@@ -47,10 +57,10 @@ var startGame = function() {
 
             if( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() )  {
                 gameEnded = true;
-                textBoxObject.innerHTML = 'Sorry. Your point is: ' + (Date.now() - startTime);
+                //textBoxObject.innerHTML = 'Sorry. Your point is: ' + (Date.now() - startTime);
 
                 setTimeout(function() {
-                    document.getElementsByClassName('container')[0].style.display = 'none';
+                    //document.getElementsByClassName('container')[0].style.display = 'none';
 
                     setTimeout(function() {
                         location.reload();

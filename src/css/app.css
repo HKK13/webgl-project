@@ -17,8 +17,23 @@ canvas {
     right: 0;
 }
 
+.loaderBar {
+    z-index: 123123;
+    width: 94%;
+    height: 100%;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    display: none;
+}
+
+.loaderBar.showLoaderBar {
+    display: block !important;
+}
+
 body {
     background-color: #16a085 !important;
+    overflow-y: hidden;
 }
 
 .loginForm {
