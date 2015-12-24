@@ -1,1 +1,2 @@
-bower_components/**/*
+src/components/
+node_modules/
