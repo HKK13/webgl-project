@@ -19,17 +19,17 @@
                 var goUp = new TWEEN.Tween({
                         y: user.position.y
                     })
-                    .to({ y: user.position.y + 3 }, 500)
+                    .to({ y: user.position.y + 3.5 }, 500)
                     .onUpdate(function() {
                         user.position.y = this.y;
                     })
                     .delay(0)
                     .easing(TWEEN.Easing.Exponential.InOut);
-            
+
                 var goDown = new TWEEN.Tween({
                         y: 4
                     })
-                    .to({ y: 1 }, 500)
+                    .to({ y: 0.5 }, 500)
                     .onUpdate(function() {
                         user.position.y = this.y;
                     }).delay(300)

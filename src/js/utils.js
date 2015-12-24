@@ -10,14 +10,15 @@ utils.get = {};
  * @returns {THREE.Mesh} Cube object
  */
 utils.generate.user = function() {
-    var geometry = new THREE.BoxGeometry(1,1,1),
-        material = new THREE.MeshPhongMaterial({ color: 0x00ff00});
+    var geometry   = new THREE.SphereGeometry(0.5, 32, 32),
+        material  = new THREE.MeshPhongMaterial();
+
 
     user = new THREE.Mesh(geometry, material);
 
-    user.translateY(1);
+    user.translateY(0.5);
     user.castShadow = true;
-    user.receiveShadow = false;
+    user.receiveShadow = true;
     scene.add(user);
     return user;
 };
