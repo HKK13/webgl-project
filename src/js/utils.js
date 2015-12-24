@@ -153,12 +153,17 @@ utils.add.planes = function() {
     grassMaterial.repeat.set(10, 50);
 
     var planeSegments = 500,
-        plane = new THREE.Mesh(
-            new THREE.PlaneGeometry(200, horizon, planeSegments, planeSegments),
-            new THREE.MeshPhongMaterial({
-                map: grassMaterial
-            })
-        );
+    plane = new THREE.Mesh(
+        new THREE.PlaneGeometry(200, horizon, planeSegments, planeSegments),
+        new THREE.ShaderMaterial( {
+            uniforms: {
+                time: { type: "f", value: 1.0 },
+                resolution: { type: "v2", value: new THREE.Vector2() }
+            },
+            vertexShader: document.getElementById( 'vertexShader' ).textContent,
+            fragmentShader: document.getElementById( 'fragment_shader' ).textContent
+        })
+    );
 
     plane.castShadow = false;
     plane.receiveShadow = true;
