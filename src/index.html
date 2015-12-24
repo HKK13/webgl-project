@@ -1,94 +1,47 @@
 <!DOCTYPE>
 <html>
-    <head>
-        <title>WebGL Project</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-        <meta charset="utf-8">
-        <link rel="stylesheet" type="text/css" href="./css/layout.css">
-        <link rel="stylesheet" type="text/css" href="./css/app.css">
-    </head>
-    <body>
-        <div class="container">
-            <p id="textBox"></p>
+<head>
+    <title>WebGL Project</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <link rel="stylesheet" type="text/css" href="./css/layout.css">
+    <link rel="stylesheet" type="text/css" href="./css/app.css">
+    <link rel="stylesheet" type="text/css" href="./components/semantic/dist/semantic.min.css">
+</head>
+<body>
+    <script src="./lib/three.min.js"></script>
+    <script src="./lib/tween.js"></script>
+    <script src="./lib/hammer.min.js"></script>
+
+    <script src="./js/init.js"></script>
+    <script src="./js/keyboard.js"></script>
+    <script src="./js/utils.js"></script>
+
+    <script src="./components/async/dist/async.min.js"></script>
+    <script src="./components/socket.io-client/socket.io.js"></script>
+    <script src="./js/socket.js"></script>
+    <script src="./components/jquery/dist/jquery.min.js"></script>
+    <script src="./components/semantic/dist/semantic.min.js"></script>
+
+    <div class="pusher">
+        <div class="ui container loginForm">
+            <div class="ui form">
+                <div class="field">
+                    <label>Single Player</label>
+                    <button class="ui button" id="singlePlayerButton" type="submit">Start</button>
+                </div>
+                <div class="field">
+                    <label>Multiplayer</label>
+                    <button class="ui button" id="joinButton" type="submit">Join</button>
+                    <button class="ui button" id="createButton" type="submit">Create</button>
+                </div>
+            </div>
         </div>
-        <script src="./lib/three.min.js"></script>
-        <script src="./lib/tween.js"></script>
-        <script src="./lib/hammer.min.js"></script>
+    </div>
+    <!-- <script>
 
-        <script src="./js/init.js"></script>
-        <script src="./js/keyboard.js"></script>
-        <script src="./js/utils.js"></script>
+</script> -->
 
-        <script src="./components/async/dist/async.min.js"></script>
-        <script src="./components/socket.io-client/socket.io.js"></script>
-        <script src="./js/socket.js"></script>
-        <script>
-            var textBoxObject = document.getElementById('textBox'),
-                startTime = null;
-
-            /* Generate user. */
-            utils.generate.user();
-
-            var gameEnded = false;
-
-            textBoxObject.innerHTML = 'Game is starting in 3 seconds...';
-
-            utils.generate.randomObjects();
-
-            utils.add.planes();
-
-            function render(time){ //Refresh 60 times per second.
-                if (gameEnded) return;
-
-                renderer.render(scene, camera);
-
-                TWEEN.update(time);
-
-                if (coefficient  <= 0.2)
-                    coefficient += 0.0001;
-
-                directionalLight.x -= coefficient * 10;
-                user.position.z -= coefficient;
-                directionalLight.position.z = user.position.z+100;
-                camera.position.z = user.position.z + 9;
-
-                requestAnimationFrame(render);
-
-                for (var vertexIndex = 0; vertexIndex < user.geometry.vertices.length; vertexIndex++){		//view-source:https://stemkoski.github.io/Three.js/Collision-Detection.html
-                    var localVertex = user.geometry.vertices[vertexIndex].clone();
-                    var globalVertex = localVertex.applyMatrix4( user.matrix );
-                    var directionVector = globalVertex.sub( user.position );
-
-                    var ray = new THREE.Raycaster( user.position.clone(), directionVector.clone().normalize() );
-                    var collisionResults = ray.intersectObjects( utils.get.collideableObjects() );
-
-                    if( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() )  {
-                        gameEnded = true;
-                        textBoxObject.innerHTML = 'Sorry. Your point is: ' + (Date.now() - startTime);
-
-                        setTimeout(function() {
-                            document.getElementsByClassName('container')[0].style.display = 'none';
-
-                            setTimeout(function() {
-                                location.reload();
-                            }, 3000);
-                        }, 2000);
-                    }
-                }
-            }
-
-            var count = 3,
-                counter = setInterval(function() {
-                    if (count == 0) {
-                        render();
-                        utils.generate.obstacles();
-                        startTime = Date.now();
-                        textBoxObject.innerHTML = 'Good luck!';
-                        return clearInterval(counter);
-                    }
-                    count--;
-                    textBoxObject.innerHTML = 'Game is starting in ' + count + ' seconds...';
-                }, 1000);
-        </script>
-    </body>
+<script src="./js/login.js"></script>
+</body>
 </html>
