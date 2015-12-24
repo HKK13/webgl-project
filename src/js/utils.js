@@ -145,16 +145,25 @@ utils.generate.addObjects_ = function() {
  * Add planes to scene.
  */
 utils.add.planes = function() {
+    var textureLoader = new THREE.TextureLoader();
+
+    var grassMaterial = textureLoader.load('./img/grass.jpg');
+
+    grassMaterial.wrapS = grassMaterial.wrapT = THREE.RepeatWrapping;
+    grassMaterial.repeat.set(10, 50);
+
     var planeSegments = 500,
         plane = new THREE.Mesh(
-            new THREE.PlaneGeometry(horizon, horizon, planeSegments, planeSegments),
-            new THREE.MeshPhongMaterial({ color:0xffffff, wireframe: false })
+            new THREE.PlaneGeometry(200, horizon, planeSegments, planeSegments),
+            new THREE.MeshPhongMaterial({
+                map: grassMaterial
+            })
         );
+
     plane.castShadow = false;
     plane.receiveShadow = true;
     plane.rotation.x = -Math.PI / 2;
     plane.position.y = 0;
-    plane.receiveShadow = true;
 
     planes.push(plane);
 
