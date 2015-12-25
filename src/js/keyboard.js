@@ -24,7 +24,7 @@
                         user.position.y = this.y;
                     })
                     .delay(0)
-                    .easing(TWEEN.Easing.Exponential.InOut);
+                    .easing(TWEEN.Easing.Exponential.Out);
 
                 var goDown = new TWEEN.Tween({
                         y: 4
@@ -33,7 +33,7 @@
                     .onUpdate(function() {
                         user.position.y = this.y;
                     }).delay(300)
-                    .easing(TWEEN.Easing.Exponential.Out);
+                    .easing(TWEEN.Easing.Bounce.Out);
 
                 goUp.chain(goDown);
                 goUp.start();
