@@ -72,8 +72,6 @@ var startGame = function() {
 
 
     function render(time){ //Refresh 60 times per second.
-
-
         var delta = clock.getDelta();
 
 		uniforms1.time.value += delta * 5;
