@@ -1,6 +1,6 @@
 var utils = {};
 utils.generate = {};
-utils.add = {}
+utils.add = {};
 utils.remove = {};
 utils.get = {};
 var uniforms1;

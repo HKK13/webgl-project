@@ -1,5 +1,51 @@
+var rooms;
+
 $('#singlePlayerButton').on('click', function() {
     startGame();
+});
+
+socket.on('getRooms', function(received) {
+    rooms = received;
+
+    var roomsField = $('.field.rooms')[0];
+
+    var template = '<div class="ui selection dropdown">' +
+    '<input type="hidden" name="gender">' +
+    '<i class="dropdown icon"></i>' +
+    '<div class="default text">Select A Room</div>' +
+    '<div class="menu">';
+
+    rooms.forEach(function(room) {
+        template += '<div class="item" data-value="' + room.id+ '">' + room.username + '</div>';
+    });
+
+    template +='</div>' +
+    '</div>';
+
+    roomsField.innerHTML += template;
+
+    $('.ui.dropdown')
+    .dropdown()
+    ;
+
+    $('.small.modal.multiplayer').modal('show');
+})
+
+$('#joinButton').on('click', function() {
+    $('.header.modal.title')[0].text = 'Join Multiplayer';
+    var roomsField = $('.field.rooms')[0];
+
+    roomsField.innerHTML = '<label>Rooms</label>';
+
+    socket.emit('queryRooms');
+});
+
+$('#createButton').on('click', function() {
+    $('.header.modal.title')[0].text = 'Create Multiplayer';
+
+    $('.field.rooms')[0].innerHTML = '';
+
+    $('.small.modal.multiplayer').modal('show');
 });
 
 var toggleLoadingSpinner = function() {
