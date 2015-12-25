@@ -64,7 +64,6 @@ utils.generate.obstacles = function(){
         var rand = 800+Math.floor(Math.random() * mulConstant);
         clearInterval(interval);
         interval = setInterval(beginGenerate, rand);
-        console.log(mulConstant);
     };
     beginGenerate();
 };

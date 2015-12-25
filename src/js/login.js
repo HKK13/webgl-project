@@ -1,4 +1,4 @@
-var rooms;
+var rooms, currentUserPoint = 0;
 
 $('#singlePlayerButton').on('click', function() {
     startGame();
@@ -10,13 +10,13 @@ socket.on('getRooms', function(received) {
     var roomsField = $('.field.rooms')[0];
 
     var template = '<div class="ui selection dropdown">' +
-    '<input type="hidden" name="gender">' +
+    '<input type="hidden" name="roomName" id="roomName">' +
     '<i class="dropdown icon"></i>' +
     '<div class="default text">Select A Room</div>' +
     '<div class="menu">';
 
     rooms.forEach(function(room) {
-        template += '<div class="item" data-value="' + room.id+ '">' + room.username + '</div>';
+        template += '<div class="item" data-value="' + room.username+ '">' + room.username + '</div>';
     });
 
     template +='</div>' +
@@ -24,15 +24,35 @@ socket.on('getRooms', function(received) {
 
     roomsField.innerHTML += template;
 
-    $('.ui.dropdown')
-    .dropdown()
-    ;
+    $('.ui.dropdown').dropdown();
 
-    $('.small.modal.multiplayer').modal('show');
+    var modalElem= $('.small.modal.multiplayer').modal('setting', {
+        closable  : true,
+        onDeny    : function() {
+            return true;
+        },
+        onApprove : function() {
+            var username = $('#username')[0].value;
+            if (!username) return alert('Please enter a username');
+
+            var roomName = $('#roomName')[0].value;
+
+            socket.emit('joinRoom', roomName);
+
+            setTimeout(function() {
+                setMessageLoadingSpinner('Loading game...');
+                toggleLoadingSpinner();
+            }, 1000);
+
+            return true;
+        }
+    });
+
+    modalElem.modal('show');
 })
 
 $('#joinButton').on('click', function() {
-    $('.header.modal.title')[0].text = 'Join Multiplayer';
+    $('.header.modal.title')[0].innerHTML = 'Join Multiplayer';
     var roomsField = $('.field.rooms')[0];
 
     roomsField.innerHTML = '<label>Rooms</label>';
@@ -40,17 +60,60 @@ $('#joinButton').on('click', function() {
     socket.emit('queryRooms');
 });
 
+socket.on('gameStarted', function() {
+    toggleLoadingSpinner();
+    startGame();
+});
+
+socket.on('gameEnded', function(rivalsPoint) {
+    if (!gameEnded) {
+        alert('Wow, you win!');
+    } else if (rivalsPoint > score) {
+        alert('You lose!')
+    } else {
+        alert('You win!');
+    }
+});
+
 $('#createButton').on('click', function() {
-    $('.header.modal.title')[0].text = 'Create Multiplayer';
+    $('.header.modal.title')[0].innerHTML = 'Create Multiplayer';
 
     $('.field.rooms')[0].innerHTML = '';
 
-    $('.small.modal.multiplayer').modal('show');
+    var modalElem= $('.small.modal.multiplayer').modal('setting', {
+        closable  : true,
+        onDeny    : function() {
+            return true;
+        },
+        onApprove : function() {
+            var username = $('#username')[0].value;
+            if (!username) return alert('Please enter a username');
+
+            socket.emit('createRoom', username);
+
+            setTimeout(function() {
+                setMessageLoadingSpinner('Waiting for another user');
+                toggleLoadingSpinner();
+            }, 1000);
+
+            return true;
+        }
+    });
+
+    modalElem.modal('show');
 });
+
+socket.on('positionUpdated', function(position) {
+    console.log(position);
+})
 
 var toggleLoadingSpinner = function() {
     $('.loadingSpinner').toggleClass('active');
     $('.loaderBar').toggleClass('showLoaderBar');
+};
+
+var setMessageLoadingSpinner = function(msg) {
+    $('.loadingText')[0].innerHTML = msg || 'Loading';
 };
 
 var startGame = function() {
@@ -74,7 +137,7 @@ var startGame = function() {
     function render(time){ //Refresh 60 times per second.
         var delta = clock.getDelta();
 
-		uniforms1.time.value += delta * 5;
+        uniforms1.time.value += delta * 5;
 
         if (gameEnded) return;
 
@@ -92,6 +155,7 @@ var startGame = function() {
 
         directionalLight.x -= coefficient * 10;
         user.position.z -= coefficient;
+        socket.emit('positionUpdate', user.position);
         directionalLight.position.z = user.position.z+100;
         camera.position.z = user.position.z + 9;
 
@@ -107,13 +171,14 @@ var startGame = function() {
 
             if( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() )  {
                 gameEnded = true;
-                //textBoxObject.innerHTML = 'Sorry. Your point is: ' + (Date.now() - startTime);
+                currentUserPoint = Date.now() - startTime;
 
+                socket.emit('gameShouldEnd', currentUserPoint);
                 setTimeout(function() {
                     //document.getElementsByClassName('container')[0].style.display = 'none';
 
                     setTimeout(function() {
-                        location.reload();
+                        //location.reload();
                     }, 3000);
                 }, 2000);
             }
