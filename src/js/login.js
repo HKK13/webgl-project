@@ -21,11 +21,17 @@ var startGame = function() {
     var gameEnded = false;
     var gameStarted = false;
     utils.generate.randomObjects();
-
+    var clock = new THREE.Clock();
     utils.add.planes();
 
 
     function render(time){ //Refresh 60 times per second.
+
+
+        var delta = clock.getDelta();
+
+		uniforms1.time.value += delta * 5;
+
         if (gameEnded) return;
 
         renderer.render(scene, camera);

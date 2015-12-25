@@ -3,7 +3,7 @@ utils.generate = {};
 utils.add = {}
 utils.remove = {};
 utils.get = {};
-
+var uniforms1;
 
 /**
  * Generates a cube.
@@ -124,9 +124,18 @@ utils.remove.passedObjects = function(){
  * @returns {THREE.Mesh}
  */
 utils.generate.addObjects_ = function() {
+    uniforms1 = {
+        time: { type: "f", value: 1.0 },
+		resolution: { type: "v2", value: new THREE.Vector2() }
+    };
+
     var geometry = new THREE.SphereGeometry( 5, 32,32 ),
-        material = new THREE.MeshPhongMaterial();
-    material.color.setRGB( Math.random(), Math.random(), Math.random() );
+        material = new THREE.ShaderMaterial( {
+						uniforms: uniforms1,
+						vertexShader: document.getElementById( 'vertexShader' ).textContent,
+						fragmentShader: document.getElementById( 'fragment_shader' ).textContent
+                    } );
+    //material.color.setRGB( Math.random(), Math.random(), Math.random() );
 
     var mesh = new THREE.Mesh( geometry, material );
 
