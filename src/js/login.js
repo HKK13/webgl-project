@@ -1,3 +1,4 @@
+var gameEnded = false;
 var rooms, currentUserPoint = 0;
 
 $('#singlePlayerButton').on('click', function() {
@@ -66,9 +67,12 @@ socket.on('gameStarted', function() {
 });
 
 socket.on('gameEnded', function(rivalsPoint) {
+    gameEnded = true;
+    console.log('Game ended', rivalsPoint);
+    console.log('My point', currentUserPoint);
     if (!gameEnded) {
         alert('Wow, you win!');
-    } else if (rivalsPoint > score) {
+    } else if (rivalsPoint > currentUserPoint) {
         alert('You lose!')
     } else {
         alert('You win!');
@@ -127,7 +131,6 @@ var startGame = function() {
     /* Generate user. */
     utils.generate.user();
 
-    var gameEnded = false;
     var gameStarted = false;
     utils.generate.randomObjects();
     var clock = new THREE.Clock();
@@ -135,11 +138,12 @@ var startGame = function() {
 
 
     function render(time){ //Refresh 60 times per second.
+        if (gameEnded) return;
+
         var delta = clock.getDelta();
 
         uniforms1.time.value += delta * 5;
 
-        if (gameEnded) return;
 
         renderer.render(scene, camera);
 
@@ -160,6 +164,7 @@ var startGame = function() {
         camera.position.z = user.position.z + 9;
 
         requestAnimationFrame(render);
+        currentUserPoint = Date.now() - startTime;
 
         for (var vertexIndex = 0; vertexIndex < user.geometry.vertices.length; vertexIndex++){		//view-source:https://stemkoski.github.io/Three.js/Collision-Detection.html
             var localVertex = user.geometry.vertices[vertexIndex].clone();
@@ -170,17 +175,15 @@ var startGame = function() {
             var collisionResults = ray.intersectObjects( utils.get.collideableObjects() );
 
             if( collisionResults.length > 0 && collisionResults[0].distance < directionVector.length() )  {
-                gameEnded = true;
-                currentUserPoint = Date.now() - startTime;
+                if (!gameEnded) {
+                    gameEnded = true;
+                    currentUserPoint = Date.now() - startTime;
 
-                socket.emit('gameShouldEnd', currentUserPoint);
-                setTimeout(function() {
-                    //document.getElementsByClassName('container')[0].style.display = 'none';
+                    alert('You lose!');
 
-                    setTimeout(function() {
-                        //location.reload();
-                    }, 3000);
-                }, 2000);
+                    socket.emit('gameShouldEnd', currentUserPoint);
+                    console.log('currentUserPoint', currentUserPoint);
+                }
             }
         }
     }
@@ -191,10 +194,10 @@ var startGame = function() {
             render();
             utils.generate.obstacles();
             startTime = Date.now();
-            //textBoxObject.innerHTML = 'Good luck!';
             return clearInterval(counter);
         }
+        setMessageLoadingSpinner('Game is starting in ' + count + ' seconds...');
+
         count--;
-        //textBoxObject.innerHTML = 'Game is starting in ' + count + ' seconds...';
     }, 1000);
 }
