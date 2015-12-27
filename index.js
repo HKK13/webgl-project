@@ -65,9 +65,7 @@ io.on('connection', (socket) => {
 
     socket.on('gameShouldEnd', function(point) {
         let roomIndex = _.findIndex(rooms, (room) => {
-            return _.contains(room.members, (member) => {
-                return member.socketId == socket.id
-            });
+            return _.find(room.members, _.matchesProperty('socketId', socket.id));
         });
 
         if (roomIndex == -1) return console.error('Not found');
@@ -79,12 +77,12 @@ io.on('connection', (socket) => {
         console.log('User with id', socket.id, 'disconnected');
 
         let roomIndex = _.findIndex(rooms, (room) => {
-            return room.members && _.contains(room.members, (member) => {
-                return member.socketId == socket.id
-            });
+            return _.find(room.members, _.matchesProperty('socketId', socket.id));
         });
 
         if (roomIndex == -1) return;
+
+        delete members[roomIndex];
     });
 });
 
