@@ -16,7 +16,7 @@ socket.on('getRooms', function(received) {
     '<div class="menu">';
 
     rooms.forEach(function(room) {
-        template += '<div class="item" data-value="' + room.username+ '">' + room.username + '</div>';
+        template += '<div class="item" data-value="' + room.name+ '">' + room.name + '</div>';
     });
 
     template +='</div>' +

@@ -26,8 +26,10 @@ io.on('connection', (socket) => {
     socket.on('createRoom', function(username) {
         rooms.push({
             id: socket.id,
-            username: username,
-            members: [username]
+            name: username,
+            members: [{
+                socketId: socket.id
+            }]
         });
 
         socket.join(username);
@@ -35,24 +37,55 @@ io.on('connection', (socket) => {
 
     socket.on('joinRoom', function(roomName) {
         let room = _.find(rooms, (room) => {
-            return room.username == roomName
+            return room.name == roomName
         });
 
         if (room) {
-            room.members = socket.id;
-            socket.join(room.username);
-            socket.to(room.username).emit('gameStarted');
+            room.members.push({
+                socketId: socket.id
+            })
+            socket.join(room.name);
+            socket.to(room.name).emit('gameStarted');
             socket.emit('gameStarted');
         }
     });
 
     socket.on('positionUpdate', function(position) {
-        //socket.to(room.username).emit('positionUpdated', position);
+        let roomIndex = _.find(rooms, (room) => {
+            return _.contains(room.members, (member) => {
+                return member.socketId == socket.id
+            });
+        });
+
+        //if (roomIndex == -1) return console.error('Not found');
+
+        //console.log(rooms[roomIndex]);
+        //socket.to(rooms[roomIndex].name).emit('positionUpdated', position);
     });
 
     socket.on('gameShouldEnd', function(point) {
-        //io.sockets.adapter.rooms[socket.id].emit('gameEnded', point);
-    })
+        let roomIndex = _.findIndex(rooms, (room) => {
+            return _.contains(room.members, (member) => {
+                return member.socketId == socket.id
+            });
+        });
+
+        if (roomIndex == -1) return console.error('Not found');
+
+        socket.to(rooms[roomIndex].name).emit('gameEnded', point);
+    });
+
+    socket.on('disconnect', function() {
+        console.log('User with id', socket.id, 'disconnected');
+
+        let roomIndex = _.findIndex(rooms, (room) => {
+            return room.members && _.contains(room.members, (member) => {
+                return member.socketId == socket.id
+            });
+        });
+
+        if (roomIndex == -1) return;
+    });
 });
 
 server.listen(3000);
