@@ -11,7 +11,9 @@ var uniforms1;
  */
 utils.generate.user = function() {
     var geometry   = new THREE.SphereGeometry(0.5, 32, 32),
-        material  = new THREE.MeshPhongMaterial();
+        material  = new THREE.MeshPhongMaterial({
+            map: (new THREE.TextureLoader()).load('./img/earth.jpg')
+        });
 
 
     user = new THREE.Mesh(geometry, material);

@@ -148,7 +148,6 @@ var startGame = function(isMultiplayer) {
 
         uniforms1.time.value += delta * 5;
 
-
         renderer.render(scene, camera);
 
         if (!gameStarted) {
@@ -169,11 +168,12 @@ var startGame = function(isMultiplayer) {
         if (coefficient  <= 0.2)
         coefficient += 0.0001;
 
-        directionalLight.x -= coefficient * 10;
         user.position.z -= coefficient;
         socket.emit('positionUpdate', user.position);
         directionalLight.position.z = user.position.z+100;
         camera.position.z = user.position.z + 9;
+        user.rotateX(-1 * coefficient);
+
 
         requestAnimationFrame(render);
         currentUserPoint = Date.now() - startTime;
