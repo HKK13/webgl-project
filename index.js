@@ -43,7 +43,7 @@ io.on('connection', (socket) => {
         if (room) {
             room.members.push({
                 socketId: socket.id
-            })
+            });
             socket.join(room.name);
             socket.to(room.name).emit('gameStarted');
             socket.emit('gameStarted');
@@ -51,16 +51,13 @@ io.on('connection', (socket) => {
     });
 
     socket.on('positionUpdate', function(position) {
-        let roomIndex = _.find(rooms, (room) => {
-            return _.contains(room.members, (member) => {
-                return member.socketId == socket.id
-            });
+        let roomIndex = _.findIndex(rooms, (room) => {
+            return _.find(room.members, _.matchesProperty('socketId', socket.id));
         });
 
-        //if (roomIndex == -1) return console.error('Not found');
+        if (roomIndex == -1) return console.error('Not found');
 
-        //console.log(rooms[roomIndex]);
-        //socket.to(rooms[roomIndex].name).emit('positionUpdated', position);
+        socket.to(rooms[roomIndex].name).emit('positionUpdated', position);
     });
 
     socket.on('gameShouldEnd', function(point) {
@@ -71,18 +68,19 @@ io.on('connection', (socket) => {
         if (roomIndex == -1) return console.error('Not found');
 
         socket.to(rooms[roomIndex].name).emit('gameEnded', point);
+        socket.emit('gameEnded', Date.now() + 10000);
     });
 
     socket.on('disconnect', function() {
         console.log('User with id', socket.id, 'disconnected');
 
         let roomIndex = _.findIndex(rooms, (room) => {
-            return _.find(room.members, _.matchesProperty('socketId', socket.id));
+            return room && _.find(room.members, _.matchesProperty('socketId', socket.id));
         });
 
         if (roomIndex == -1) return;
 
-        delete members[roomIndex];
+        delete rooms[roomIndex];
     });
 });
 

@@ -1,8 +1,8 @@
 var gameEnded = false;
-var rooms, currentUserPoint = 0;
+var rooms, currentUserPoint = 0, roomName;
 
 $('#singlePlayerButton').on('click', function() {
-    startGame();
+    startGame(false);
 });
 
 socket.on('getRooms', function(received) {
@@ -36,7 +36,7 @@ socket.on('getRooms', function(received) {
             var username = $('#username')[0].value;
             if (!username) return alert('Please enter a username');
 
-            var roomName = $('#roomName')[0].value;
+            roomName = $('#roomName')[0].value;
 
             socket.emit('joinRoom', roomName);
 
@@ -63,7 +63,7 @@ $('#joinButton').on('click', function() {
 
 socket.on('gameStarted', function() {
     toggleLoadingSpinner();
-    startGame();
+    startGame(true);
 });
 
 socket.on('gameEnded', function(rivalsPoint) {
@@ -73,7 +73,7 @@ socket.on('gameEnded', function(rivalsPoint) {
     if (!gameEnded) {
         alert('Wow, you win!');
     } else if (rivalsPoint > currentUserPoint) {
-        alert('You lose!')
+        alert('You lose!');
     } else {
         alert('You win!');
     }
@@ -107,10 +107,6 @@ $('#createButton').on('click', function() {
     modalElem.modal('show');
 });
 
-socket.on('positionUpdated', function(position) {
-    console.log(position);
-})
-
 var toggleLoadingSpinner = function() {
     $('.loadingSpinner').toggleClass('active');
     $('.loaderBar').toggleClass('showLoaderBar');
@@ -120,10 +116,13 @@ var setMessageLoadingSpinner = function(msg) {
     $('.loadingText')[0].innerHTML = msg || 'Loading';
 };
 
-var startGame = function() {
+var startGame = function(isMultiplayer) {
     toggleLoadingSpinner();
 
     init();
+
+    if(isMultiplayer)
+    utils.generate.opponent(); // TODO: Don't forget this.
 
     var textBoxObject = document.getElementById('textBox'),
     startTime = null;
@@ -136,6 +135,11 @@ var startGame = function() {
     var clock = new THREE.Clock();
     utils.add.planes();
 
+    socket.on('positionUpdated', function(coordinates){
+        opponent.position.x = coordinates.x;
+        opponent.position.y = coordinates.y;
+        opponent.position.z = coordinates.z;
+    });
 
     function render(time){ //Refresh 60 times per second.
         if (gameEnded) return;
@@ -150,6 +154,14 @@ var startGame = function() {
         if (!gameStarted) {
             toggleLoadingSpinner();
             gameStarted = true;
+        }
+
+        if(roomName){
+            socket.emit('positionUpdate', {
+                x: user.position.x,
+                y: user.position.y,
+                z: user.position.z
+            });
         }
 
         TWEEN.update(time);
@@ -178,8 +190,6 @@ var startGame = function() {
                 if (!gameEnded) {
                     gameEnded = true;
                     currentUserPoint = Date.now() - startTime;
-
-                    alert('You lose!');
 
                     socket.emit('gameShouldEnd', currentUserPoint);
                     console.log('currentUserPoint', currentUserPoint);
