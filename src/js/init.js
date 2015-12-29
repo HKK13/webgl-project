@@ -25,7 +25,7 @@ function init() {
     camera.position.y = 5;
 
     /** Initialize fog */
-    scene.fog = new THREE.FogExp2( renderer.getClearColor(), 0.0005 );
+    scene.fog = new THREE.FogExp2( renderer.getClearColor(), 0.004 , 100); //WTF
 
 
     //Lightning
@@ -33,7 +33,7 @@ function init() {
     directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
     directionalLight.position.set( 100, 100, 0 );
     directionalLight.castShadow = true;
-    directionalLight.shadowDarkness = 0.5;
+    directionalLight.shadowDarkness = 0.9;
     directionalLight.shadowCameraRight     =  5;
     directionalLight.shadowCameraLeft     = -5;
     directionalLight.shadowCameraTop      =  5;

@@ -70,7 +70,6 @@ utils.generate.obstacles = function(){
     var rand = 7000;
     var interval;
     var mulConstant = 7000;
-    setTimeout(10000);
     beginGenerate = function (){
         var mesh = utils.generate.shape();
         scene.add(mesh);
@@ -78,11 +77,11 @@ utils.generate.obstacles = function(){
 
         mulConstant = (mulConstant > 1500) ? mulConstant - 500 * coefficient : 1400;
 
-        var rand = 800+Math.floor(Math.random() * mulConstant);
+        var rand = 1000+Math.floor(Math.random() * mulConstant);
         clearInterval(interval);
         interval = setInterval(beginGenerate, rand);
     };
-    beginGenerate();
+    setTimeout(beginGenerate, 1000);
 };
 
 var obstaclePos = [-3.5, 3.5];
@@ -148,10 +147,11 @@ utils.generate.addObjects_ = function() {
     var geometry = new THREE.SphereGeometry( 5, 32,32 ),
         material = new THREE.ShaderMaterial( {
 						uniforms: uniforms1,
-						vertexShader: document.getElementById( 'vertexShader' ).textContent,
-						fragmentShader: document.getElementById( 'fragment_shader' ).textContent
+						vertexShader: document.getElementById( 'vertexShader' )
+                        .textContent,
+						fragmentShader: document.getElementById( 'fragment_shader' )
+                        .textContent,
                     } );
-    //material.color.setRGB( Math.random(), Math.random(), Math.random() );
 
     var mesh = new THREE.Mesh( geometry, material );
 
