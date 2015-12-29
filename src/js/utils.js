@@ -24,6 +24,21 @@ utils.generate.user = function() {
 };
 
 
+utils.generate.opponent = function(){
+    var geometry   = new THREE.SphereGeometry(0.5, 32, 32),
+        material  = new THREE.MeshPhongMaterial({color: 0xff0000});
+
+
+    opponent = new THREE.Mesh(geometry, material);
+
+    opponent.translateY(0.5);
+    opponent.castShadow = true;
+    opponent.receiveShadow = true;
+    scene.add(opponent);
+    return opponent;
+}
+
+
 /**
  * Generates random objects every 7 seconds.
  */

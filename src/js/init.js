@@ -1,4 +1,4 @@
-var renderer, scene, camera, grid, user;
+var renderer, scene, camera, grid, user, opponent;
 var horizon = 3000;
 var planes = [], objects = [];
 var coefficient = 0.1,
