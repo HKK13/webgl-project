@@ -191,6 +191,10 @@ var startGame = function(isMultiplayer) {
                     gameEnded = true;
                     currentUserPoint = Date.now() - startTime;
 
+                    if (!isMultiplayer) {
+                        alert('Your score is ' + currentUserPoint);
+                    }
+
                     socket.emit('gameShouldEnd', currentUserPoint);
                     console.log('currentUserPoint', currentUserPoint);
                 }
