@@ -34,10 +34,10 @@ function init() {
     directionalLight.position.set( 100, 100, 0 );
     directionalLight.castShadow = true;
     directionalLight.shadowDarkness = 0.9;
-    directionalLight.shadowCameraRight     =  5;
-    directionalLight.shadowCameraLeft     = -5;
-    directionalLight.shadowCameraTop      =  5;
-    directionalLight.shadowCameraBottom   = -5;
+    directionalLight.shadowCameraRight     =  150;
+    directionalLight.shadowCameraLeft     = -150;
+    directionalLight.shadowCameraTop      =  150;
+    directionalLight.shadowCameraBottom   = -150;
     directionalLight.shadowCameraNear = true;
 
     scene.add( directionalLight );
